@@ -2,129 +2,130 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Código Aleatório</title>
+  <title>Verificação Bem-Sucedida</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Fonte do Google Fonts -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* RESET BÁSICO */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
+    /* Reset básico */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #2a2a72, #009ffd);
-      color: #f0f0f0;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      background: #5865F2;
+      font-family: 'Inter', sans-serif;
     }
 
-    /* CONTAINER PRINCIPAL */
-    .container {
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
-      padding: 2rem 3rem;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      max-width: 90%;
-      width: 400px;
+    .card {
       position: relative;
+      background: #2F3136;
+      border-radius: 12px;
+      padding: 2.5rem 2rem 2rem;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
 
-    /* TÍTULO */
-    h1 {
-      font-size: 2rem;
+    /* Círculo com ícone */
+    .card::before {
+      content: '✔︎';
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #677BC4;
+      color: white;
+      font-size: 24px;
+      width: 56px;
+      height: 56px;
+      line-height: 56px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .card h1 {
+      margin-top: 1.5rem; /* espaço para o círculo */
+      font-size: 1.5rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      letter-spacing: 1px;
+      color: #FFFFFF;
     }
 
-    /* CÓDIGO */
+    .card p {
+      margin: 0.75rem 0 1.8rem;
+      font-size: 0.95rem;
+      color: #CCCCCC;
+      line-height: 1.4;
+    }
+
+    /* Código gerado */
     #code {
-      display: inline-block;
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 600;
-      padding: 0.5rem 1rem;
-      background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-      border-radius: 0.75rem;
       color: #222;
+      background: #FFD97D;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      min-width: 160px;
+      margin-bottom: 1.5rem;
       animation: pulse 1.5s infinite ease-in-out;
     }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50%     { transform: scale(1.05); }
     }
 
-    /* SUBTÍTULO */
-    p {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #ddd;
+    .card button {
+      background: #677BC4;
+      color: #FFF;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .card button:hover {
+      background: #5A6FAA;
     }
 
-    /* Anúncio invisível */
-    #ad {
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      position: absolute;
-      pointer-events: none;
-      user-select: none;
-      overflow: hidden;
-    }
-
-    /* RESPONSIVIDADE */
-    @media (max-width: 480px) {
-      .container {
-        padding: 1.5rem 2rem;
-      }
-      #code {
-        font-size: 2.5rem;
-      }
+    /* Responsivo */
+    @media (max-width: 360px) {
+      .card { width: 90%; padding: 2rem 1.5rem 1.5rem; }
+      #code { font-size: 2rem; min-width: 140px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Bem-vindo!</h1>
-    <div id="code">Carregando...</div>
-    <p>Código aleatório gerado para você.</p>
+  <div class="card">
+    <h1>Verificação Bem-Sucedida!</h1>
+    <p>Você foi autenticado com sucesso pelo Discord.</p>
+
+    <!-- Aqui será exibido o código -->
+    <div id="code">Server Up</div>
+
+    <button onclick="window.location.href='https://discord.com/channels/1376608550566105208/1376620289500381336'">
+      Voltar ao Servidor
+    </button>
   </div>
 
-  <!-- Anúncio invisível -->
-  <iframe
-    id="ad"
-    src="https://example-ad-site.com/ads"
-    frameborder="0"
-    scrolling="no"
-    aria-hidden="true"
-  ></iframe>
-
   <script>
-    // Gera o código com probabilidade de 0.1%
+    // Gera o código com chance de 0.1%
     const chance = Math.random();
-    const code = chance <= 0.001 ? "123511" : "124112";
+    const generatedCode = chance <= 0.001 ? "123511" : "124112";
 
-    // Pequeno delay para mostrar o efeito de carregamento
+    // Aguarda um breve momento para o efeito de carregamento
     setTimeout(() => {
-      const codeEl = document.getElementById("code");
-      codeEl.textContent = code;
-    }, 1000);
+      document.getElementById("code").textContent = generatedCode;
+    }, 800);
   </script>
 
 </body>
