@@ -2,14 +2,13 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Verificação Bem-Sucedida</title>
+  <title>Verificação</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Reset básico */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; width: 100%; }
 
@@ -25,107 +24,188 @@
       position: relative;
       background: #2F3136;
       border-radius: 12px;
-      padding: 2.5rem 2rem 2rem;
-      width: 320px;
+      padding: 2rem;
+      width: 360px;
       text-align: center;
       box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
 
-    /* Círculo com ícone */
-    .card::before {
-      content: '✔︎';
-      position: absolute;
-      top: -28px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #677BC4;
-      color: white;
-      font-size: 24px;
-      width: 56px;
-      height: 56px;
-      line-height: 56px;
-      border-radius: 50%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
     .card h1 {
-      margin-top: 1.5rem; /* espaço para o círculo */
       font-size: 1.5rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: #FFF;
+      margin-bottom: 0.5rem;
     }
 
     .card p {
-      margin: 0.75rem 0 1.8rem;
-      font-size: 0.95rem;
-      color: #CCCCCC;
-      line-height: 1.4;
+      color: #CCC;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
     }
 
-    /* Código gerado */
+    /* Canvas para desenho */
+    #captchaCanvas {
+      background: #1f2024;
+      border: 2px dashed #444;
+      border-radius: 8px;
+      cursor: crosshair;
+    }
+
+    .controls {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    .controls button {
+      flex: 1;
+      margin: 0 0.25rem;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .controls button:first-child { background: #677BC4; color: #FFF; }
+    .controls button:last-child  { background: #D9534F; color: #FFF; }
+    .controls button:hover { opacity: 0.9; }
+
+    /* Código gerado (escondido até passar no captcha) */
     #code {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 600;
       color: #222;
       background: #FFD97D;
       padding: 0.5rem 1rem;
       border-radius: 8px;
-      display: inline-block;
-      min-width: 160px;
-      margin-bottom: 1.5rem;
+      display: none;
+      margin: 1.5rem auto;
       animation: pulse 1.5s infinite ease-in-out;
+      min-width: 160px;
     }
-
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50%     { transform: scale(1.05); }
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.05); }
     }
 
-    .card button {
-      background: #677BC4;
+    .card button.submit {
+      background: #28A745;
       color: #FFF;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
       border: none;
       border-radius: 6px;
-      padding: 0.6rem 1.2rem;
-      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background 0.2s;
     }
-    .card button:hover {
-      background: #5A6FAA;
-    }
+    .card button.submit:hover { background: #218838; }
 
-    /* Responsivo */
-    @media (max-width: 360px) {
-      .card { width: 90%; padding: 2rem 1.5rem 1.5rem; }
-      #code { font-size: 2rem; min-width: 140px; }
+    @media (max-width: 380px) {
+      .card { width: 90%; padding: 1.5rem; }
+      #captchaCanvas { width: 100%; height: 150px; }
     }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Verificação Bem-Sucedida!</h1>
-    <p>Para ser autentificado copie o codigo abaixo e cole no discord</p>
+    <h1>Verificação Antes do Código</h1>
+    <p>Desenhe um caminho tortuoso dentro do quadro abaixo para provar que você não é um bot:</p>
 
-    <!-- Aqui será exibido o código -->
-    <div id="code">Server Up</div>
+    <canvas id="captchaCanvas" width="320" height="180"></canvas>
 
-    <button onclick="window.location.href='https://discord.com/channels/1376608550566105208/1376620289500381336'">
+    <div class="controls">
+      <button id="btnSubmit">Confirmar</button>
+      <button id="btnClear">Limpar</button>
+    </div>
+
+    <!-- Código ficará oculto até passar no captcha -->
+    <div id="code">Carregando...</div>
+
+    <button class="submit" id="btnNext" style="display:none;"
+      onclick="window.location.href='https://discord.com/channels/1376608550566105208/1376620289500381336'">
       Voltar ao Servidor
     </button>
   </div>
 
   <script>
-    // Gera o código com chance de 0.1%
-    const chance = Math.random();
-    const generatedCode = chance <= 0.001 ? "123511" : "124112";
+    const canvas = document.getElementById('captchaCanvas');
+    const ctx = canvas.getContext('2d');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnClear  = document.getElementById('btnClear');
+    const codeEl    = document.getElementById('code');
+    const btnNext   = document.getElementById('btnNext');
 
-    // Aguarda um breve momento para o efeito de carregamento
-    setTimeout(() => {
-      document.getElementById("code").textContent = generatedCode;
-    }, 8000);
+    let drawing = false;
+    let points = [];
+
+    canvas.addEventListener('mousedown', e => {
+      drawing = true;
+      points = [];
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.beginPath();
+      const rect = canvas.getBoundingClientRect();
+      points.push([e.clientX-rect.left, e.clientY-rect.top]);
+      ctx.moveTo(points[0][0], points[0][1]);
+    });
+
+    canvas.addEventListener('mousemove', e => {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX-rect.left, y = e.clientY-rect.top;
+      points.push([x,y]);
+      ctx.lineTo(x,y);
+      ctx.strokeStyle = '#FFF';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+    });
+    canvas.addEventListener('mouseleave', () => {
+      drawing = false;
+    });
+
+    btnClear.addEventListener('click', () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      points = [];
+    });
+
+    btnSubmit.addEventListener('click', () => {
+      if (points.length < 10) {
+        alert('Desenhe algo primeiro!');
+        return;
+      }
+      // calcula comprimento real do traçado
+      let pathLen = 0;
+      for (let i = 1; i < points.length; i++) {
+        const dx = points[i][0] - points[i-1][0];
+        const dy = points[i][1] - points[i-1][1];
+        pathLen += Math.hypot(dx, dy);
+      }
+      // distância direta entre início e fim
+      const [x0,y0] = points[0];
+      const [x1,y1] = points[points.length-1];
+      const straight = Math.hypot(x1-x0, y1-y0);
+
+      const ratio = straight / pathLen;
+      // quanto mais próximo de 1, mais reto
+      if (ratio > 0.9) {
+        alert('Traçado muito reto! Tente algo mais tortuoso.');
+        return;
+      }
+
+      // passou no captcha: exibe o código
+      const chance = Math.random();
+      const generatedCode = chance <= 0.001 ? "123511" : "124112";
+      codeEl.textContent = generatedCode;
+      codeEl.style.display = 'inline-block';
+      btnNext.style.display = 'block';
+      // desabilita controles
+      btnSubmit.disabled = btnClear.disabled = canvas.style.pointerEvents = true;
+    });
   </script>
 
 </body>
